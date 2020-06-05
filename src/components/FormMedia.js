@@ -19,6 +19,7 @@ export default function FormMedia(props) {
                         inputProps={props.campo.isResponse?{
                             style:{
                                 color: "#069C38",//#00c853
+                                fontSize: 23
                             }
                         }:{}}
                         
