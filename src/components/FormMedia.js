@@ -18,7 +18,7 @@ export default function FormMedia(props) {
                         step="1.3"
                         inputProps={props.campo.isResponse?{
                             style:{
-                                color: "#00c853",
+                                color: "#2AB072",//#00c853
                             }
                         }:{}}
                         
