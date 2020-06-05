@@ -190,7 +190,7 @@ function Calculadora() {
   return (
     <>
     <Grid container direction="row" justify="center" spacing={2}>
-        <Grid item xs={10} sm={7} md={4} style={{ backgroundColor: '#ADB4B8', borderRadius: 5, padding: 20 }}>
+        <Grid item xs={10} sm={7} md={4} style={{ backgroundColor: '#FFFFFF', borderRadius: 5, padding: 20 } /* bgcolor ADB4B8 */}>
             <form autoComplete="off">
             <Grid container >
                 <Grid item >
