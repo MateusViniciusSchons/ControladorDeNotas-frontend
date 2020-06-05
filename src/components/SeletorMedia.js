@@ -1,7 +1,5 @@
 import React from 'react';
-import { Typography, Grid, Switch, FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
-
-import CheckIcon from '@material-ui/icons/Check';
+import { Typography, Grid, FormControl, RadioGroup, FormControlLabel, Radio } from '@material-ui/core';
 
 export default function SeletorMedia(props) {
     return(

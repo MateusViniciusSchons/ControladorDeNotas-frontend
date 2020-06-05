@@ -1,7 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
-import MobileStepper from '@material-ui/core/MobileStepper';
 
 export default function Menu () {
     return(

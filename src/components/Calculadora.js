@@ -24,8 +24,6 @@ function Calculadora() {
   const [ campos, setCampos ] = useState([{index: 0, nota: '', peso: '', isResponse: false}]);
   const [ lastIndex, setLastIndex ] = useState(0);
   const [ mediaType, setMediaType ] = useState("Comum");
-  const [ somaPesos, setSomaPesos ] = useState(0);
-  const [ notasNulas, setNotasNulas ] = useState(1);
   const [ erros, setErros ] = useState([])
   useEffect(() => {
     function atualizarNotasNulas() {
@@ -47,7 +45,6 @@ function Calculadora() {
           ...novoArray
         ]
       }
-      setNotasNulas(soma);
       
     }
 
@@ -74,7 +71,6 @@ function Calculadora() {
             ...novoArray
           ]
         }
-        setSomaPesos(soma)
       }
 
       function TodosOsCamposTemPeso() {
@@ -134,7 +130,6 @@ function Calculadora() {
           return null;
         })
         setCampos(campos)
-        setSomaPesos(0)
         
       }
     }
@@ -258,7 +253,6 @@ function Calculadora() {
 
         <Grid item xs={11} md={7}>
           <h1>Como funciona?</h1>
-          <p>
             <ol>
                 <li>Escolha o tipo de média (Média comum ou com pesos). <small>Se não sabe o que é média com pesos, <a href="/">clique aqui</a></small></li>
                 <li>Adicione o número de campos que seriam suas notas no semestre (se terão duas notas, adicione 2 campos).</li>
@@ -269,7 +263,6 @@ function Calculadora() {
                 <li>Sinta-se à vontade para fazer modificar as informações que quiser e recalcular as notas.</li>
                 <li>Você também pode fazer projeções futuras inserindo uma nota que você acha que vai tirar.</li>
             </ol> 
-          </p>
         </Grid>
     </Grid>
     </>

@@ -3,7 +3,6 @@ import React from 'react'
 import Menu from './components/Menu'
 import Calculadora from './components/Calculadora'
 
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
 
 
