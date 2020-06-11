@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 
 import FormMedia from './FormMedia';
 import SeletorMedia from './SeletorMedia';
+import Instrucoes from './Instrucoes';
 
 import '../App.css';
 import api from '../services/api';
 
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { Button, Snackbar } from '@material-ui/core';
+import { Button, Snackbar,TextField, Paper } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SendIcon from '@material-ui/icons/Send';
 
@@ -25,6 +26,7 @@ function Calculadora() {
   const [ lastIndex, setLastIndex ] = useState(0);
   const [ mediaType, setMediaType ] = useState("Comum");
   const [ erros, setErros ] = useState([])
+  const [ media, setMedia ] = useState('');
   useEffect(() => {
     function atualizarNotasNulas() {
       let soma = 0;
@@ -170,7 +172,7 @@ function Calculadora() {
       }
       return null;
     })
-    const response = await api.post('/calculations/grade', { notas: campos });
+    const response = await api.post('/calculations/grade', { notas: campos, media });
 
     let camposNormais = campos;
 
@@ -189,16 +191,37 @@ function Calculadora() {
 
   return (
     <>
-    <Grid container direction="row" justify="center" spacing={2}>
-        <Grid item xs={10} sm={7} md={4} style={{ backgroundColor: '#B0B1B8', borderRadius: 5, padding: 20 } /* bgcolor ADB4B8 */}>
+    <Grid container direction="row" justify="space-evenly" spacing={2}>
+        <Grid item xs={10} sm={7} md={4} style={{ backgroundColor: 'white', marginTop: '30px', borderRadius: 5, padding: 20 } /* #1CC6E6  #DB1A3C bgcolor ADB4B8 */}>
             <form autoComplete="off">
             <Grid container >
-                <Grid item >
+                <Grid item xs={12} >
                     <SeletorMedia type={{ mediaType, setMediaType }} />
                 </Grid>
-                
-                
             </Grid>
+
+            <Grid container >
+                <Grid item xs={10} >
+                    <h3>Média Escolar</h3>
+                    <TextField
+                        type="number"
+                        fullWidth
+                        required
+                        inputProps={{
+                          required: true
+                        }}
+                        max={10}
+                        min={0}
+                        step="1.3"
+                        id="outlined-basic"
+                        label="Media" 
+                        variant="outlined" 
+                        value={media} 
+                        onChange={e => setMedia(!isNaN(e.target.value) && e.target.value !== '' && e.target.value >= 0 && e.target.value <= 10 ? e.target.value: e.target.value === ''? '': media)}
+                    />
+                </Grid>
+            </Grid>
+
             <h3>Notas</h3>
             <Grid container justify="center">
                 <Grid item xs={12}>
@@ -208,7 +231,7 @@ function Calculadora() {
                         ))
                     }
                 </Grid>
-                <Grid item xs={10/*mediaType === "Com Pesos"?  10: 5*/}>
+                <Grid item xs={10}>
                     <Button fullWidth onClick={addCampo} style={{ marginTop: 10 }} variant="contained" color="primary">
                         <AddIcon />
                     </Button>
@@ -224,7 +247,7 @@ function Calculadora() {
                   <Grid item xs={10}>
                   <Grid container justify="flex-end">
                   <Button
-                  disabled={ erros.length > 0? true: false}
+                  disabled={ erros.length > 0 || media === undefined || media === null || media === ''? true: false}
                   style={{ marginTop: 10 }} 
                   variant="contained"
                   color="primary"
@@ -251,18 +274,8 @@ function Calculadora() {
             </form>
         </Grid>
 
-        <Grid item xs={11} md={7}>
-          <h1>Como funciona?</h1>
-            <ol>
-                <li>Escolha o tipo de média (Média comum ou com pesos). <small>Se não sabe o que é média com pesos, <a href="/">clique aqui</a></small></li>
-                <li>Adicione o número de campos que seriam suas notas no semestre (se terão duas notas, adicione 2 campos).</li>
-                <li>Preencha os campos com as notas que você sabe, deixando em branco as que você não sabe.</li>
-                <li>Aperte em <strong>calcular.</strong></li>
-                <li>Calcularemos para você que nota(s) deve tirar para atingir a média esperada.</li>
-                <li>Os resultados aparecerão em cor verde nos campos que você deixou em branco.</li>
-                <li>Sinta-se à vontade para fazer modificar as informações que quiser e recalcular as notas.</li>
-                <li>Você também pode fazer projeções futuras inserindo uma nota que você acha que vai tirar.</li>
-            </ol> 
+        <Grid item xs={11} md={6}>
+            <Instrucoes />
         </Grid>
     </Grid>
     </>
