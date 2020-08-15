@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-import FormMedia from './FormMedia';
-import SeletorMedia from './SeletorMedia';
+import SeletorMedia from '../../../components/SeletorMedia';
+import FormMedia from '../../../components/FormMedia';
 import Instrucoes from './Instrucoes';
 
-import '../App.css';
-import api from '../services/api';
+import api from '../../../services/api';
 
 import MuiAlert from '@material-ui/lab/Alert';
 
-import { Button, Snackbar,TextField, Paper } from '@material-ui/core';
+import { Button, Snackbar, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SendIcon from '@material-ui/icons/Send';
 
@@ -274,7 +273,7 @@ function Calculadora() {
             </form>
         </Grid>
 
-        <Grid item xs={11} md={6}>
+        <Grid item xs={10} md={6}>
             <Instrucoes />
         </Grid>
     </Grid>

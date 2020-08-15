@@ -22,7 +22,6 @@ export default function FormMedia(props) {
                                 fontSize: 23,
                             }
                         }:{}}
-                        
                         id="outlined-basic"
                         label="Nota" 
                         variant="outlined" 

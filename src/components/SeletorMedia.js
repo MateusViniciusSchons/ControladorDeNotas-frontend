@@ -15,7 +15,7 @@ export default function SeletorMedia(props) {
                     <Chip label={
                         <FormControlLabel value="Comum" control={<Radio style={{ display: 'none' }} />} label={"Comum"} style={{ marginLeft: 0, marginRight: 0 }} />
                       } 
-                      style={props.type.mediaType === 'Comum'? {backgroundColor: '#50AABD' }: {backgroundColor: '#DBDBDB'}}
+                      style={props.type.mediaType === 'Comum'? {backgroundColor: '#3f51b5', border: 'none', color: 'white'}:  {backgroundColor: 'white', border: '1px solid #a9a9a9', color: '#595959'}/*{backgroundColor: '#DBDBDB'}*/}
                     />
                     
                     </Grid>
@@ -25,7 +25,7 @@ export default function SeletorMedia(props) {
                     <Chip label={
                         <FormControlLabel value="Com Pesos" control={<Radio style={{ display: 'none' }} />} label="Com Pesos" style={{ marginLeft: 0, marginRight: 0}} />
                       } 
-                      style={props.type.mediaType === 'Com Pesos'? {backgroundColor: '#50AABD' }: {backgroundColor: '#DBDBDB'}}
+                      style={props.type.mediaType === 'Com Pesos'? {backgroundColor: '#3f51b5', border: 'none', color: 'white'}: {backgroundColor: 'white', border: '1px solid #a9a9a9', color: '#595959'}}
                     />
                       
                     
