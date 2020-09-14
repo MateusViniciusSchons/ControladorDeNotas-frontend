@@ -1,7 +1,6 @@
 import React from 'react';
-import { AppBar, Toolbar, IconButton, Typography, Button, Grid } from '@material-ui/core';
+import { AppBar, Toolbar, IconButton, Typography, Button } from '@material-ui/core';
 import { Link } from 'react-router-dom'
-import { Menu as MenuIcon, ExitToApp } from '@material-ui/icons';
 import { useHistory } from 'react-router-dom'
 import { makeStyles } from '@material-ui/core/styles';
 

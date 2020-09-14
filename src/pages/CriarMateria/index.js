@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 
 import SeletorMedia from '../../components/SeletorMedia'
 import FormMedia from '../../components/FormMedia'
@@ -45,7 +45,7 @@ export default function Materia(props) {
       }
 
       async function salvarNotas() {
-        const matterId = await api.post(`/matters/create`, { matterName: nomeMateria }, { headers: { userid: localStorage.getItem('userId') } })
+        const matter = await api.post(`/matters/create`, { matterName: nomeMateria }, { headers: { userid: localStorage.getItem('userId') } })
 
           if(mediaType === 'Comum') {
               campos.map(campo => {
@@ -53,17 +53,20 @@ export default function Materia(props) {
               })
           }
 
-          let notas = campos
+          let notas = campos;
 
             notas.map(nota => {
                 nota.weight = nota.peso
+                nota.peso = nota.peso
                 nota.value = nota.nota
+                nota.nota = nota.nota
             })
          
+            console.log("Notas: ", notas)
           
           await api.put('/grades/update', {
               matter: {
-                matterId: matterId.data.id
+                matterId: matter.data.id
               },
               grades: notas
           }, {

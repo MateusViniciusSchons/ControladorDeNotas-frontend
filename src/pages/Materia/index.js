@@ -36,8 +36,8 @@ export default function Materia(props) {
             const response = await api.get(`/matters/${props.match.params.id}/grades`)
             response.data.map( nota => {
 
-                setLastIndex(nota.id)
-                nota.index = nota.id
+                nota.index = response.data.indexOf(nota);
+                setLastIndex(response.data.indexOf(nota));
 
                 if(nota.nota === null) {
                     nota.nota = ''
@@ -47,6 +47,7 @@ export default function Materia(props) {
                     setMediaType('Com Pesos')
                 } else {
                     nota.peso = ''
+                    setMediaType('Comum')
                 }
             })
             setCampos(response.data)
@@ -66,22 +67,25 @@ export default function Materia(props) {
         event.preventDefault();
     
         if (campos.length > 1) {
-          const novosCampos = campos.filter(campo => campo.index !== index)
-          setCampos(novosCampos);
+          const camposQueFicamIguais = campos.filter(campo => campo.index !== index && campo.id !== index);
+          setCampos(camposQueFicamIguais);
         }
       }
     
-      function updateCampo(novoCampo, isResp = false) {
-    
-          const novosCampos = campos.filter(campo => campo.index !== novoCampo.index)
-          campos.map(campo => {
-              if(novoCampo.index === campo.id) {
+    function updateCampo(novoCampo, isResp = false) {
+
+        const camposQueFicamIguais = campos.filter(campo => campo.index !== novoCampo.index)
+        const campoASerModificado = campos.filter(campo => campo.index === novoCampo.index)
+        novoCampo.id = campos[campos.indexOf(campoASerModificado[0])].id
+        /*
+        campos.map(campo => {
+            if(novoCampo.index === campo.id) {
                 novoCampo.id = campo.id
-              }
-          })
-          novoCampo.isResponse = isResp;
-          setCampos([ ...novosCampos, novoCampo ]);
-      }
+            }
+        })*/
+        novoCampo.isResponse = isResp;
+        setCampos([ ...camposQueFicamIguais, novoCampo ]);
+    }
 
       async function salvarNotas() {
         await api.put(`/matters/${props.match.params.id}/update`, { matterName: nomeMateria }, { headers: { userid: localStorage.getItem('userId') } })
@@ -99,12 +103,12 @@ export default function Materia(props) {
 
                 notas.map(nota => {
                     if(nota.id && nota.id === notaInicial.id) {
-                        existe = true
+                        //existe = true
                     }
                 })
                 
                 if(!existe) {
-                    notas.push({ ...notaInicial, delete: true })
+                    //notas.push({ ...notaInicial, delete: true })
                 }
             })
 
@@ -125,8 +129,8 @@ export default function Materia(props) {
           }})
 
           notasAtualizadas.data.map(nota => {
-              nota.index = lastIndex + 1
-              setLastIndex(lastIndex + 1)
+              nota.index = notasAtualizadas.data.indexOf(nota);
+              setLastIndex(notasAtualizadas.data.indexOf(nota));
 
               if(nota.nota === null) {
                   nota.nota = ''

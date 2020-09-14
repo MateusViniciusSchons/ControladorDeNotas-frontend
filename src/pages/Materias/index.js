@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import api from '../../services/api'
 import Menu from '../../components/Menu'
 
-import { Paper, Grid, Button } from '@material-ui/core';
+import { Grid, Button } from '@material-ui/core';
 
 import AddIcon from '@material-ui/icons/Add';
  
@@ -19,10 +19,10 @@ export default function Cadastro() {
             const userId = localStorage.getItem('userId')
             const response = await api.get('/matters', {
                 headers: {
-                    userid: Number(userId),
+                    userid: userId,
                 }
             })
-            setMatters(response.data)
+            if(!response.data.error) setMatters(response.data);
         }
         getMatters();
         
