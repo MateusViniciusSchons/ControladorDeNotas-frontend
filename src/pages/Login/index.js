@@ -1,35 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import Menu from '../../components/Menu'
+import Menu from '../../components/Menu';
 
-import { Grid, TextField, Button } from '@material-ui/core'
+import { Grid, TextField, Button } from '@material-ui/core';
 import Alert from '@material-ui/lab/Alert';
 
-import { VpnKey, Send } from '@material-ui/icons'
+import { VpnKey, Send } from '@material-ui/icons';
 
-import { useHistory, Link } from 'react-router-dom'
+import { useHistory, Link } from 'react-router-dom';
 
-import api from '../../services/api'
+import api from '../../services/api';
 
 export default function Login() {
-    const [ user, setUser ] = useState({ email: '', password: '' })
-    const [ error, setError ] = useState({})
+    const [ user, setUser ] = useState({ email: '', password: '' });
+    const [ error, setError ] = useState({});
 
-    const history = useHistory()
+    const history = useHistory();
 
     function changeUser(event) {
-        setUser({ ...user, [event.target.name]: event.target.value })
-        setError({})
+        setUser({ ...user, [event.target.name]: event.target.value });
+        setError({});
     }
 
     async function submitData(event) {
         event.preventDefault()
-        const response = await api.post('/login', user)
+        const response = await api.post('/login', user);
         if(response.data.error) {
-            setError({ message: response.data.error })
+            setError({ message: response.data.error });
         } else {
-            localStorage.setItem('userId', response.data.userId)
-            history.push('/materias')
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('userAverage', response.data.average);
+            history.push('/materias');
         }
     }
 
@@ -44,7 +45,7 @@ export default function Login() {
                 
                 <Grid item xs={9} md={5} lg={4} component="form" onSubmit={submitData} style={{ backgroundColor: 'rgb(249, 249, 249)', padding: 10, borderRadius: 10 }} >
                     <TextField error={error.message? true: false} id="standard-basic" fullWidth required label="Email" name="email" type="email" onChange={changeUser} value={user.email} />
-                    <TextField error={error.message? true: false} id="standard-basic" fullWidth required label="Senha" name="password" onChange={changeUser} value={user.password} />
+                    <TextField error={error.message? true: false} id="standard-basic" fullWidth required label="Senha" type="password" name="password" onChange={changeUser} value={user.password} />
                     <Grid item xs style={{ marginTop: 20 }}>
                         { error.message &&
                             <Alert severity="error" style={{ float: "left" }}>

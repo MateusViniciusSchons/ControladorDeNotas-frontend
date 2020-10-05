@@ -1,26 +1,51 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import SeletorMedia from '../../components/SeletorMedia'
 import FormMedia from '../../components/FormMedia'
 import Menu from '../../components/Menu'
+import Alert from '../../components/Alert'
 
 import AddIcon from '@material-ui/icons/Add';
 import SendIcon from '@material-ui/icons/Send';
 
 import api from '../../services/api'
 
+import updateWeight from '../../helpers/updateWeight';
+import validate from '../../helpers/validate';
+
 import Grid from '@material-ui/core/Grid';
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Snackbar } from '@material-ui/core';
 
 import { useHistory } from 'react-router-dom'
+
 
 export default function Materia(props) {
     const [ mediaType, setMediaType ] = useState('Comum')
     const [ nomeMateria, setNomeMateria ] = useState('')
     const [ campos, setCampos ] = useState([{index: 0, nota: '', peso: '', isResponse: false}]);
     const [ lastIndex, setLastIndex ] = useState(0);
+    const [ erros, setErros ] = useState([]);
+    const [ media, setMedia ] = useState(Number(localStorage.getItem('userAverage')));
 
     const history = useHistory()
+
+    useEffect(() => {
+
+    }, []);
+
+    useEffect(() => {
+        let errs = validate.validateFields(campos, mediaType);
+
+        setErros(errs.length > 0? [errs[0]]:[])
+      }, [campos, mediaType]);
+
+      useEffect(() => {
+        if(mediaType === "Comum") {
+            let newFields = updateWeight(campos);
+            setCampos(newFields);
+        }
+      }, [mediaType]);
+    
 
     function addCampo() {
         setCampos([...campos, { index: lastIndex + 1, nota: '', peso: '', isResponse: false }])
@@ -44,8 +69,9 @@ export default function Materia(props) {
           setCampos([ ...novosCampos, novoCampo ]);
       }
 
-      async function salvarNotas() {
-        const matter = await api.post(`/matters/create`, { matterName: nomeMateria }, { headers: { userid: localStorage.getItem('userId') } })
+      async function calcularESalvarNotas() {
+        const response = await api.post('/calculations/grade', { notas: campos, media });
+        const matter = await api.post(`/matters/create`, { matterName: nomeMateria, average: media }, { headers: { userid: localStorage.getItem('userId') } })
 
           if(mediaType === 'Comum') {
               campos.map(campo => {
@@ -55,15 +81,16 @@ export default function Materia(props) {
 
           let notas = campos;
 
+            notas = notas.filter(nota => nota.vota !== null && nota.nota !== '');
+            notas.push(...response.data.notas);
+
             notas.map(nota => {
-                nota.weight = nota.peso
-                nota.peso = nota.peso
-                nota.value = nota.nota
-                nota.nota = nota.nota
+                nota.weight = Number(nota.peso)
+                nota.peso = Number(nota.peso)
+                nota.value = Number(nota.nota)
+                nota.nota = Number(nota.nota)
+                nota.isResponse = nota.isResponse? nota.isResponse: false
             })
-         
-            console.log("Notas: ", notas)
-          
           await api.put('/grades/update', {
               matter: {
                 matterId: matter.data.id
@@ -75,7 +102,6 @@ export default function Materia(props) {
           }})
 
           history.push('/materias')
-          
       }
 
     return(
@@ -87,11 +113,19 @@ export default function Materia(props) {
                         <h5 onClick={() => history.goBack()}>voltar</h5>
                         <h3>Matéria</h3>
                         <TextField 
-                            label='nome' 
+                            label='Nome' 
                             variant='outlined' 
                             fullWidth 
                             value={nomeMateria}
                             onChange={event => setNomeMateria(event.target.value)} 
+                        />
+                        <TextField 
+                            style={{ marginTop: 15}}
+                            label='Média' 
+                            variant='outlined' 
+                            fullWidth 
+                            value={media}
+                            onChange={event => setMedia(Number(event.target.value))} 
                         />
                         <SeletorMedia type={{ mediaType, setMediaType }} />
                         {
@@ -112,17 +146,27 @@ export default function Materia(props) {
                         </Grid>
                         <Grid container justify='flex-start'>
                             <Grid item xs={10}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    style={{ marginTop: 10, fontFamily: 'Arial', fontWeight: 'normal', float: 'right' }}
-                                    endIcon={<SendIcon />}
-                                    onClick={salvarNotas}
-                                >
-                                    Cadastrar
-                                </Button>
+                                    <Button
+                                        disabled={ erros.length > 0 ? true: false}
+                                        variant="contained"
+                                        color="primary"
+                                        style={{ marginTop: 10, fontFamily: 'Arial', fontWeight: 'normal', float: 'right' }}
+                                        endIcon={<SendIcon />}
+                                        onClick={calcularESalvarNotas}
+                                    >
+                                        Calcular e Cadastrar
+                                    </Button>
                             </Grid>
                         </Grid>
+                        {
+                erros.map(erro => (
+                  <Snackbar open={true} autoHideDuration={6000} key={erro.message}>
+                    <Alert severity="warning">
+                      { erro.message }
+                    </Alert>
+                  </Snackbar>
+                ))
+                }
                     </form>
                 </Grid>
             </Grid>

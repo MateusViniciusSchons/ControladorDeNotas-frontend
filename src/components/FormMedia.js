@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TextField, IconButton } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -6,6 +6,27 @@ import Grid from '@material-ui/core/Grid';
 
 
 export default function FormMedia(props) {
+
+    const [estilos, setEstilos] = useState({});
+
+    // Calcula qual será a estilização dos campos toda vez que mudar a nota
+    useEffect(() => {
+        calculaEstilos();
+    }, [props.campo.nota]);
+
+    function calculaEstilos() {
+        let estilosCalculados = {};
+        if(props.campo.nota > 10) estilosCalculados.color = "#EB3B34";
+        if(props.campo.isResponse) {
+            if(!estilosCalculados.color) {
+                estilosCalculados.color = "#069C38";
+            }
+            estilosCalculados.fontSize = 23;
+        }
+
+        setEstilos(estilosCalculados);
+    }
+
     return(
         <div style={{ flexGrow: 1 }}>
         <Grid container justify="center" direction="row" spacing={1} style={{ marginTop: 6 }}>
@@ -16,12 +37,7 @@ export default function FormMedia(props) {
                         max={10}
                         min={0}
                         step="1.3"
-                        inputProps={props.campo.isResponse?{
-                            style:{
-                                color: "#069C38",//#00c853
-                                fontSize: 23,
-                            }
-                        }:{}}
+                        inputProps={{style: estilos}}
                         id="outlined-basic"
                         label="Nota" 
                         variant="outlined" 
@@ -37,11 +53,7 @@ export default function FormMedia(props) {
                     props.mediaType === "Com Pesos" && 
                     <Grid item xs={5}>
                         <TextField
-                            inputProps={props.campo.isResponse?{
-                                style:{
-                                    fontSize: 23,
-                                }
-                            }:{}}
+                            inputProps={{ style: estilos }}
                             fullWidth
                             id="outlined-basic" 
                             label="Peso" 

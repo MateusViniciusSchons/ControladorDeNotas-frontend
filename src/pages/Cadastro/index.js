@@ -106,6 +106,7 @@ export default function Cadastro() {
                             required
                             fullWidth
                             name="password"
+                            type="password"
                             value={user.password}
                             onChange={changeUser}
                         />
@@ -129,7 +130,7 @@ export default function Cadastro() {
                                 endIcon={<SendIcon />}
                                 type='submit'
                             >
-                                Send
+                                Cadastrar
                             </Button>
                         </Grid>
                         </Grid>

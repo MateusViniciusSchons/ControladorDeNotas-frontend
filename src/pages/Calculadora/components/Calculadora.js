@@ -3,10 +3,12 @@ import React, { useState, useEffect } from 'react';
 import SeletorMedia from '../../../components/SeletorMedia';
 import FormMedia from '../../../components/FormMedia';
 import Instrucoes from './Instrucoes';
+import Alert from '../../../components/Alert'
 
 import api from '../../../services/api';
 
-import MuiAlert from '@material-ui/lab/Alert';
+import updateWeight from '../../../helpers/updateWeight';
+import validate from '../../../helpers/validate';
 
 import { Button, Snackbar, TextField } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
@@ -14,129 +16,23 @@ import SendIcon from '@material-ui/icons/Send';
 
 import Grid from '@material-ui/core/Grid';
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-
 function Calculadora() {
-  let errs = []
   const [ campos, setCampos ] = useState([{index: 0, nota: '', peso: '', isResponse: false}]);
   const [ lastIndex, setLastIndex ] = useState(0);
   const [ mediaType, setMediaType ] = useState("Comum");
   const [ erros, setErros ] = useState([])
   const [ media, setMedia ] = useState('');
   useEffect(() => {
-    function atualizarNotasNulas() {
-      let soma = 0;
-      campos.map(campo => {
-        if(campo.nota === '' || campo.nota === undefined || campo.nota === null || campo.isResponse === true) {
-          soma += 1;
-        }
-        return null;
-      })
-      if(soma === 0) {
-          let novoArray = errs.filter(erro => erro.message !== "Deve ter no mínimo 1 nota sem valor")
-          errs = [...novoArray, { message: "Deve ter no mínimo 1 nota sem valor"}]
-          
-      } else {
-         
-          let novoArray =  errs.filter(erro => erro.message !== "Deve ter no mínimo 1 nota sem valor")
-        errs = [
-          ...novoArray
-        ]
-      }
-      
-    }
-
-    function atualizarSomaPesos() {
-    
-        let soma = 0
-        campos.map(campo => {
-          if(!isNaN(campo.peso)) {
-            soma += Number(campo.peso)
-          }
-          return null;
-        })
-
-        if(soma !== 10 && mediaType === "Com Pesos") {
-          let novoArray = errs.filter(erro => erro.message !== "A soma dos pesos deve ser 10")
-          errs = [
-            ...novoArray,
-            { message: "A soma dos pesos deve ser 10"}
-          ]
-          
-        } else {
-          let novoArray = errs.filter(erro => erro.message !== "A soma dos pesos deve ser 10")
-          errs = [
-            ...novoArray
-          ]
-        }
-      }
-
-      function TodosOsCamposTemPeso() {
-        if(mediaType === "Com Pesos" && campos.filter(campo => campo.peso === "").length > 0) {
-          let novoArray = errs.filter(erro => erro.message !== "Todos os campos devem ter peso")
-          errs = [
-            ...novoArray, 
-            { message: "Todos os campos devem ter peso"}
-          ]
-          
-        } else {
-          let novoArray = errs.filter(erro => erro.message !== "Todos os campos devem ter peso")
-          errs = [
-            ...novoArray
-          ]
-          
-        }
-      }
-
-      function notasMaioresQue10() {
-        campos.map(campo => {
-          if(!campo.isResponse) {
-            if(Number(campo.nota) > 10) {
-              let novoArray = errs.filter(erro => erro.message !== "As notas devem ser menores do que 10")
-              errs = [
-                ...novoArray, 
-                { message: "As notas devem ser menores do que 10"}
-              ]
-            } else if(Number(campo.nota) < 0) {
-              let novoArray = errs.filter(erro => erro.message !== "As notas devem ser maiores do que 0")
-              errs = [
-                ...novoArray, 
-                { message: "As notas devem ser maiores do que 0"}
-              ]
-            } else {
-
-            }
-          }
-          return null;
-        })
-      }
-
-    atualizarSomaPesos();
-    atualizarNotasNulas();
-    TodosOsCamposTemPeso();
-    notasMaioresQue10();
+    let errs = validate.validateFields(campos, mediaType);
 
     setErros(errs.length > 0? [errs[0]]:[])
   }, [campos, mediaType])
 
   useEffect(() => {
-
-    function updatePesos() {
-      if(mediaType === "Comum") {
-        campos.map(campo => {
-          campo.peso = ''
-          return null;
-        })
-        setCampos(campos)
-        
-      }
+    if(mediaType === "Comum") {
+      let newFields = updateWeight(campos);
+      setCampos(newFields);
     }
-
-    updatePesos();
-    setErros(errs)
   }, [mediaType])
 
   function addCampo() {

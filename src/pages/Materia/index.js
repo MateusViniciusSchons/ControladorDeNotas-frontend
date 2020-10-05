@@ -24,16 +24,19 @@ export default function Materia(props) {
     const [ campos, setCampos ] = useState([{index: 0, nota: '', peso: '', isResponse: false}]);
     const [ notasIniciais, setNotasIniciais ] = useState([{index: 0, nota: '', peso: '', isResponse: false}]);
     const [ lastIndex, setLastIndex ] = useState(0);
+    const [ media, setMedia ] = useState(0);
 
     const history = useHistory()
 
     useEffect(() => {
-        async function pegarNome() {
+        async function pegarMateria() {
             const resp = await api.get(`/matters/${props.match.params.id}`, { headers: { userid: localStorage.getItem('userId') } })
-            setNomeMateria(resp.data.name)
+            setNomeMateria(resp.data.name);
+            setMedia(resp.data.average);
         }
         async function consultarApi() {
             const response = await api.get(`/matters/${props.match.params.id}/grades`)
+            console.log(response)
             response.data.map( nota => {
 
                 nota.index = response.data.indexOf(nota);
@@ -54,8 +57,9 @@ export default function Materia(props) {
             setNotasIniciais(response.data)
             
         }
-        pegarNome();
+        pegarMateria();
         consultarApi();
+        
     }, [])
 
     function addCampo() {
@@ -88,16 +92,14 @@ export default function Materia(props) {
     }
 
       async function salvarNotas() {
-        await api.put(`/matters/${props.match.params.id}/update`, { matterName: nomeMateria }, { headers: { userid: localStorage.getItem('userId') } })
+        const resp = await api.post('/calculations/grade', { notas: campos, media });
+        await api.put(`/matters/${props.match.params.id}/update`, { matterName: nomeMateria, average: media }, { headers: { userid: localStorage.getItem('userId') } })
 
-          if(mediaType === 'Comum') {
-              campos.map(campo => {
-                  campo.peso = ''
-              })
-          }
 
-          let notas = campos
-
+            let notas = campos
+            notas = notas.filter(nota => nota.nota !== '' && nota.nota !== null && nota.isResponse === false);
+            notas.push(...resp.data.notas);
+/*
             notasIniciais.map(notaInicial => {
                 let existe = false;
 
@@ -111,14 +113,15 @@ export default function Materia(props) {
                     //notas.push({ ...notaInicial, delete: true })
                 }
             })
-
+*/
 
             notas.map(nota => {
                 nota.weight = nota.peso
                 nota.value = nota.nota
+                nota.isResponse = nota.isResponse
             })
          
-          
+          console.log(notas)
           const notasAtualizadas = await api.put('/grades/update', {
               matter: {
                   matterId: props.match.params.id
@@ -178,6 +181,15 @@ export default function Materia(props) {
                             value={nomeMateria}
                             onChange={event => setNomeMateria(event.target.value)} 
                         />
+
+                        <TextField 
+                            style={{ marginTop: 15 }}
+                            label='Média' 
+                            variant='outlined' 
+                            fullWidth 
+                            value={media}
+                            onChange={event => setMedia(event.target.value)} 
+                        />
                         
                         <SeletorMedia type={{ mediaType, setMediaType }} />
                         <h3>Notas</h3>
@@ -208,7 +220,7 @@ export default function Materia(props) {
                                     endIcon={<SendIcon />}
                                     onClick={salvarNotas}
                                 >
-                                    Salvar
+                                    Calcular e Salvar
                                 </Button>
                             </Grid>
                         </Grid>
